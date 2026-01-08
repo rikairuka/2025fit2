@@ -10,14 +10,14 @@ class Tile:
    def __init__(self):
       self.step = 0
       self.timer = 0
-      self.wait = pyxel.rndi(90, 150) 
+      self.wait = pyxel.rndi(120, 180) 
       self.burn = 60
 
    def start(self):#時間経過にかかわらず初回クリック時にのみ動く
       if self.step == 0:
          self.step = 1
          self.timer = 0
-         self.wait = pyxel.rndi(90, 150)
+         self.wait = pyxel.rndi(120, 180)
 
    def click(self):
       if self.step == 2:
@@ -150,3 +150,4 @@ class APP:
          pyxel.text(40, 60, "GAME OVER", 8)
       
 APP()
+
