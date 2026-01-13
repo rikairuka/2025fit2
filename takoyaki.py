@@ -19,8 +19,9 @@ class Tile:
          self.timer = 0
          self.wait = pyxel.rndi(120, 180)
 
-   def click(self):
+   def click(self):#時間経過にかかわらず焼きと焦げのクリック時にのみ動く
       if self.step == 2:
+         pyxel.play(0, 0)
          self.step = 0
          self.timer = 0
          return "score"
@@ -53,17 +54,25 @@ class Tile:
 
       return burned
 
+
 class APP:
   def __init__(self):
       pyxel.init(128, 128, title="pyxel")
       pyxel.mouse(True) #マウスを使えるようにする
       pyxel.load('my_resource.pyxres')
 
+      pyxel.sound(0).set(notes='A2C3', tones='TT', volumes='33', effects='NN', speed=10)
+      pyxel.sound(1).set(notes='C2', tones='N', volumes='3', effects='S', speed=30)
+
       self.tiles = [Tile() for _ in range(10)]
       
       self.score = 0
       self.burn_count = 0
       self.game_over = False
+
+      self.time_limit = 60*30
+      self.time_count = 0
+      self.time_over = False
 
       pyxel.run(self.update, self.draw)
 
@@ -74,9 +83,12 @@ class APP:
     
       if self.game_over:
          return #game overになったらreturn以降の処理がストップする
+      
+      if self.time_over:
+         return
 
       if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
-         
+        
          for i in range(len(fx)): #上段
             x = fx[i]
 
@@ -94,10 +106,15 @@ class APP:
 
       for tile in self.tiles:
          if tile.update():
+            pyxel.play(0, 1)
             self.burn_count += 1
 
       if self.burn_count >= 10:
          self.game_over = True
+
+      self.time_count += 1
+      if self.time_count >= self.time_limit:
+         self.time_over = True
 
       
 
@@ -136,9 +153,11 @@ class APP:
          elif tile.step==3:
           pyxel.blt(x,70,0,48,0,16,16,0)
 
-
-      pyxel.text(5, 5, 'score: '+str(self.score), 0)
-      pyxel.text(5, 15, 'burned: '+str(self.burn_count), 0)
+      remaining = max(0, (self.time_limit - self.time_count) // 30)
+      pyxel.text(5, 5, 'time:'+str(remaining),0)
+      pyxel.text(5, 15, 'score: '+str(self.score), 0)
+      pyxel.text(5, 25, 'burned: '+str(self.burn_count), 0)
+      
 
       if self.game_over:
          pyxel.bltm(0, 0, 0, 0, 0, 128, 128)
@@ -148,6 +167,13 @@ class APP:
            pyxel.blt(px[i],90,0,80,0,32,32,0)
 
          pyxel.text(40, 60, "GAME OVER", 8)
+
+      if self.time_over:
+         pyxel.bltm(0, 0, 0, 0, 0, 128, 128)
+
+         pyxel.text(45, 30, "TIME OVER", 8)
+         pyxel.text(35, 60, 'FINAL SCORE: '+str(self.score), 0)
+         pyxel.text(35, 80, 'FINAL BURNED: '+str(self.burn_count), 0)
+
       
 APP()
-
