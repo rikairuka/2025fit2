@@ -171,9 +171,10 @@ class APP:
       if self.time_over:
          pyxel.bltm(0, 0, 0, 0, 0, 128, 128)
 
-         pyxel.text(45, 30, "TIME OVER", 8)
+         pyxel.text(45, 30, " FINISH!", 8)
          pyxel.text(35, 60, 'FINAL SCORE: '+str(self.score), 0)
          pyxel.text(35, 80, 'FINAL BURNED: '+str(self.burn_count), 0)
 
       
 APP()
+
